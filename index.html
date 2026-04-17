@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Triage Institucional Quiz</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar glass">
+      <div class="brand-block">
+        <div class="logo-mark">TC</div>
+        <div>
+          <span class="eyebrow">quiz interactivo</span>
+          <h1>Clínica del Control y la Prevención</h1>
+        </div>
+      </div>
+      <p class="lead">Triage Institucional con experiencia tipo Quizizz, preguntas aleatorias, leaderboard individual y envío a Google Sheets por Apps Script.</p>
+
+      <div class="sidebar-cards">
+        <div class="mini-card">
+          <span>Preguntas</span>
+          <strong id="statQuestions">20</strong>
+        </div>
+        <div class="mini-card">
+          <span>Tiempo</span>
+          <strong id="statTime">25 s</strong>
+        </div>
+        <div class="mini-card">
+          <span>Intento</span>
+          <strong>Único</strong>
+        </div>
+      </div>
+
+      <div class="leaderboard-panel">
+        <div class="panel-head">
+          <span class="eyebrow">ranking</span>
+          <h2>Leaderboard</h2>
+        </div>
+        <div id="leaderboard" class="leaderboard-list">
+          <div class="empty-state">Cargando ranking...</div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main glass">
+      <div class="topbar">
+        <div class="progress-group">
+          <div class="progress-text-row">
+            <span id="progressText">Listo para iniciar</span>
+            <span id="scoreText">Score: 0</span>
+          </div>
+          <div class="progress-track">
+            <span id="progressBar"></span>
+          </div>
+        </div>
+        <div class="hud-row">
+          <div class="badge warning" id="streakBadge">Racha: 0</div>
+          <div class="timer-wrap" id="timerRing">
+            <div class="timer-inner"><span id="timerText">25</span></div>
+          </div>
+        </div>
+      </div>
+
+      <section class="screen active" id="screenWelcome">
+        <div class="hero-card card">
+          <span class="eyebrow">bienvenida</span>
+          <h2>Participa en el reto institucional</h2>
+          <p>Responde el diagnóstico inicial en formato de torneo, con puntaje, velocidad, racha y podio final. Tus respuestas se guardarán automáticamente en Google Sheets.</p>
+          <div class="actions">
+            <button class="btn btn-primary" id="startBtn">Comenzar</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen" id="screenForm">
+        <div class="card form-card">
+          <span class="eyebrow">registro inicial</span>
+          <h2>Antes de empezar</h2>
+          <p>Diligencia estos datos personales para habilitar el intento.</p>
+          <div class="field-grid">
+            <label class="field">
+              <span>1. Secretaría a la que pertenece</span>
+              <input id="secretaria" type="text" placeholder="Ej. Secretaría General" />
+            </label>
+            <label class="field">
+              <span>2. Nombres y apellidos</span>
+              <input id="nombre" type="text" placeholder="Ej. Juan David Pérez" />
+            </label>
+          </div>
+          <div class="actions">
+            <button class="btn btn-secondary" id="backWelcomeBtn">Volver</button>
+            <button class="btn btn-primary" id="validateBtn">Iniciar quiz</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen" id="screenQuiz">
+        <div class="card quiz-card">
+          <div class="question-meta">
+            <span class="chip" id="sectionChip">Sección</span>
+            <span class="chip" id="countChip">Pregunta 1 de 20</span>
+            <span class="chip success" id="bonusChip">+5 base</span>
+          </div>
+          <div class="streak-banner" id="streakBanner">🔥 Racha actual: 0</div>
+          <h2 class="question-title" id="questionTitle"></h2>
+          <div class="options-grid" id="optionsGrid"></div>
+          <div class="quiz-footer">
+            <p id="helperText">Selecciona una respuesta antes de continuar.</p>
+            <div class="actions compact">
+              <button class="btn btn-secondary" id="skipBtn">Saltar</button>
+              <button class="btn btn-primary" id="nextBtn" disabled>Siguiente</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen" id="screenResult">
+        <div class="card result-card">
+          <span class="eyebrow">resultado final</span>
+          <h2 id="resultTitle">¡Terminaste!</h2>
+          <p id="resultSubtitle">Tu información ya fue enviada.</p>
+          <div class="result-stats">
+            <div class="result-box">
+              <span>Puntaje</span>
+              <strong id="finalScore">0</strong>
+            </div>
+            <div class="result-box">
+              <span>Porcentaje</span>
+              <strong id="finalPercent">0%</strong>
+            </div>
+            <div class="result-box">
+              <span>Nivel</span>
+              <strong id="finalLevel">Inicial</strong>
+            </div>
+          </div>
+          <div class="podium" id="podium"></div>
+          <div class="actions">
+            <button class="btn btn-secondary" id="restartBtn">Volver al inicio</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="toast" class="toast"></div>
+  <div id="confetti" class="confetti-layer"></div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
