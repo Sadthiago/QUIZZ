@@ -187,19 +187,20 @@ document.addEventListener('DOMContentLoaded', () => {
   loadLeaderboard();
 });
 
-function showScreen(id){
+function showScreen(id) {
   document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
   $(id).classList.add('active');
 }
 
-function startQuiz(){
+function startQuiz() {
   const secretaria = $('secretaria').value.trim();
   const nombre = $('nombre').value.trim();
-  if(!secretaria || !nombre){
-    toast('Completa Secretaría y Nombres y Apellidos.');
+  const correo = $('correo').value.trim();
+  if (!secretaria || !nombre || !correo) {
+    toast('Completa todos los campos (Secretaría, Nombre y Correo).');
     return;
   }
-  state.participant = { secretaria, nombre };
+  state.participant = { secretaria, nombre, correo };
   state.questions = prepareQuestions(QUESTIONS);
   state.currentIndex = 0;
   state.selectedAnswer = null;
@@ -215,16 +216,16 @@ function startQuiz(){
 }
 
 /* Prepares questions keeping section order but shuffling options within each question */
-function prepareQuestions(source){
+function prepareQuestions(source) {
   return source.map(q => ({
     ...q,
     opciones: shuffleArray([...q.opciones])
   }));
 }
 
-function renderQuestion(){
+function renderQuestion() {
   const q = state.questions[state.currentIndex];
-  if(!q){
+  if (!q) {
     finishQuiz();
     return;
   }
@@ -233,7 +234,7 @@ function renderQuestion(){
   const isNewSection = state.currentSection !== newSection;
   state.currentSection = newSection;
 
-  if(isNewSection){
+  if (isNewSection) {
     showSectionTransition(newSection, () => {
       displayQuestion(q);
     });
@@ -244,7 +245,7 @@ function renderQuestion(){
   }
 }
 
-function displayQuestion(q){
+function displayQuestion(q) {
   $('sectionChip').textContent = q.seccion;
   $('countChip').textContent = `Pregunta ${state.currentIndex + 1} de ${state.questions.length}`;
   $('bonusChip').textContent = `+${q.valor} pts`;
@@ -279,7 +280,7 @@ function displayQuestion(q){
 }
 
 /* Animate question swap (within same section) */
-function animateQuestionSwap(callback){
+function animateQuestionSwap(callback) {
   const quizCard = document.querySelector('.quiz-card');
   quizCard.classList.add('question-exit');
   setTimeout(() => {
@@ -291,7 +292,7 @@ function animateQuestionSwap(callback){
 }
 
 /* Shows a full-screen section transition animation */
-function showSectionTransition(sectionName, callback){
+function showSectionTransition(sectionName, callback) {
   const sectionData = SECTIONS.find(s => s.name === sectionName) || SECTIONS[0];
   const sectionIndex = SECTIONS.findIndex(s => s.name === sectionName);
   const overlay = $('sectionOverlay');
@@ -327,10 +328,10 @@ function showSectionTransition(sectionName, callback){
 }
 
 /* Spawn floating particles for section transition */
-function spawnSectionParticles(container, color){
+function spawnSectionParticles(container, color) {
   const particleLayer = container.querySelector('.section-particles');
   particleLayer.innerHTML = '';
-  for(let i = 0; i < 20; i++){
+  for (let i = 0; i < 20; i++) {
     const p = document.createElement('span');
     p.className = 'section-particle';
     p.style.left = `${Math.random() * 100}%`;
@@ -343,7 +344,7 @@ function spawnSectionParticles(container, color){
   }
 }
 
-function selectAnswer(letter, button){
+function selectAnswer(letter, button) {
   document.querySelectorAll('.option-card').forEach(el => el.classList.remove('selected'));
   button.classList.add('selected');
   state.selectedAnswer = letter;
@@ -352,31 +353,31 @@ function selectAnswer(letter, button){
   playTone(540, 0.05, 'sine');
 }
 
-function nextQuestion(){
-  if(!state.selectedAnswer){
+function nextQuestion() {
+  if (!state.selectedAnswer) {
     toast('Selecciona una opción o usa Saltar.');
     return;
   }
   registerAnswer(state.selectedAnswer);
 }
 
-function skipQuestion(){
+function skipQuestion() {
   registerAnswer(null);
 }
 
-function registerAnswer(selected){
+function registerAnswer(selected) {
   clearInterval(state.timer);
   const q = state.questions[state.currentIndex];
   const isCorrect = selected === q.correcta;
   const gained = isCorrect ? q.valor : 0;
 
-  if(isCorrect){
+  if (isCorrect) {
     state.score += gained;
     state.streak += 1;
     state.bestStreak = Math.max(state.bestStreak, state.streak);
     toast(`¡Correcto! +${gained} puntos`);
     playSuccessSound();
-    if(state.streak >= 3) launchConfetti(26);
+    if (state.streak >= 3) launchConfetti(26);
   } else {
     state.streak = 0;
     toast(selected ? 'Respuesta registrada.' : 'Pregunta saltada.');
@@ -398,20 +399,20 @@ function registerAnswer(selected){
   renderQuestion();
 }
 
-function updateHud(){
+function updateHud() {
   $('scoreText').textContent = `Score: ${state.score}`;
   $('streakBadge').textContent = `Racha: ${state.streak}`;
   $('streakBanner').textContent = `🔥 Racha actual: ${state.streak}`;
 }
 
-function startTimer(){
+function startTimer() {
   clearInterval(state.timer);
   state.timeLeft = state.timePerQuestion;
   paintTimer();
   state.timer = setInterval(() => {
     state.timeLeft -= 1;
     paintTimer();
-    if(state.timeLeft <= 0){
+    if (state.timeLeft <= 0) {
       clearInterval(state.timer);
       toast('Tiempo agotado.');
       registerAnswer(null);
@@ -419,13 +420,13 @@ function startTimer(){
   }, 1000);
 }
 
-function paintTimer(){
+function paintTimer() {
   const pct = Math.max(0, (state.timeLeft / state.timePerQuestion) * 100);
   $('timerText').textContent = state.timeLeft;
   $('timerRing').style.background = `conic-gradient(var(--warning) ${pct}%, rgba(255,255,255,.08) 0)`;
 }
 
-async function finishQuiz(){
+async function finishQuiz() {
   clearInterval(state.timer);
   $('progressBar').style.width = '100%';
   $('progressText').textContent = 'Completado';
@@ -436,6 +437,7 @@ async function finishQuiz(){
   const payload = {
     secretaria: state.participant.secretaria,
     nombre: state.participant.nombre,
+    correo: state.participant.correo,
     score: state.score,
     percentage,
     level,
@@ -460,7 +462,7 @@ async function finishQuiz(){
       body: JSON.stringify(payload)
     });
     const data = await response.json();
-    if(!data.ok) throw new Error(data.message || 'No se pudo guardar');
+    if (!data.ok) throw new Error(data.message || 'No se pudo guardar');
     $('resultSubtitle').textContent = `Secretaría: ${state.participant.secretaria}. Resultado guardado correctamente.`;
     toast('Resultado enviado a Google Sheets.');
     await loadLeaderboard();
@@ -471,7 +473,7 @@ async function finishQuiz(){
   }
 }
 
-async function loadLeaderboard(){
+async function loadLeaderboard() {
   try {
     const response = await fetch(APPS_SCRIPT_URL);
     const data = await response.json();
@@ -485,9 +487,9 @@ async function loadLeaderboard(){
   }
 }
 
-function renderLeaderboard(items){
+function renderLeaderboard(items) {
   const box = $('leaderboard');
-  if(!items.length){
+  if (!items.length) {
     box.innerHTML = '<div class="empty-state">Aún no hay resultados registrados.</div>';
     return;
   }
@@ -503,9 +505,9 @@ function renderLeaderboard(items){
   `).join('');
 }
 
-function renderPodium(items){
+function renderPodium(items) {
   const podium = $('podium');
-  if(!items.length){
+  if (!items.length) {
     podium.innerHTML = '';
     return;
   }
@@ -522,7 +524,7 @@ function renderPodium(items){
   ` : `<div class="podium-card ${classes[index]}"><div class="podium-medal">${medals[index]}</div><p>Sin dato</p></div>`).join('');
 }
 
-function resetExperience(){
+function resetExperience() {
   $('secretaria').value = '';
   $('nombre').value = '';
   state.participant = null;
@@ -542,19 +544,19 @@ function resetExperience(){
   showScreen('screenWelcome');
 }
 
-function shuffleArray(arr){
-  for(let i = arr.length - 1; i > 0; i--){
+function shuffleArray(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [arr[i], arr[j]] = [arr[j], arr[i]];
   }
   return arr;
 }
 
-function launchConfetti(count){
+function launchConfetti(count) {
   const host = $('confetti');
   host.innerHTML = '';
-  const colors = ['#3ed6c8','#2b93ff','#ffca5c','#ff7070','#ffffff'];
-  for(let i = 0; i < count; i++){
+  const colors = ['#3ed6c8', '#2b93ff', '#ffca5c', '#ff7070', '#ffffff'];
+  for (let i = 0; i < count; i++) {
     const piece = document.createElement('span');
     piece.className = 'confetti-piece';
     piece.style.left = `${Math.random() * 100}vw`;
@@ -567,7 +569,7 @@ function launchConfetti(count){
   setTimeout(() => { host.innerHTML = ''; }, 3200);
 }
 
-function playTone(freq, duration, type='sine'){
+function playTone(freq, duration, type = 'sine') {
   try {
     const context = new (window.AudioContext || window.webkitAudioContext)();
     const osc = context.createOscillator();
@@ -580,21 +582,21 @@ function playTone(freq, duration, type='sine'){
     osc.start();
     gain.gain.exponentialRampToValueAtTime(.0001, context.currentTime + duration);
     osc.stop(context.currentTime + duration);
-  } catch (e) {}
+  } catch (e) { }
 }
 
-function playSuccessSound(){
+function playSuccessSound() {
   playTone(660, .08, 'triangle');
   setTimeout(() => playTone(860, .08, 'triangle'), 90);
 }
 
-function playFinishSound(){
+function playFinishSound() {
   playTone(523, .1, 'triangle');
   setTimeout(() => playTone(659, .1, 'triangle'), 120);
   setTimeout(() => playTone(784, .18, 'triangle'), 240);
 }
 
-function toast(message){
+function toast(message) {
   const el = $('toast');
   el.textContent = message;
   el.classList.add('show');
@@ -602,26 +604,26 @@ function toast(message){
   el._hide = setTimeout(() => el.classList.remove('show'), 2600);
 }
 
-function escapeHtml(value){
-  return String(value || '').replace(/[&<>"']/g, (m) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+function escapeHtml(value) {
+  return String(value || '').replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
 }
 
 /* ── Theme Toggle ──────────────────────────────────── */
-function initTheme(){
+function initTheme() {
   const saved = localStorage.getItem('quiz-theme');
   // Default to light if no preference saved
   applyTheme(saved || 'light');
 }
 
-function toggleTheme(){
+function toggleTheme() {
   const current = document.documentElement.getAttribute('data-theme');
   const next = current === 'light' ? 'dark' : 'light';
   applyTheme(next);
   localStorage.setItem('quiz-theme', next);
 }
 
-function applyTheme(theme){
-  if(theme === 'light'){
+function applyTheme(theme) {
+  if (theme === 'light') {
     document.documentElement.setAttribute('data-theme', 'light');
     $('themeToggle').textContent = '☀️';
   } else {
