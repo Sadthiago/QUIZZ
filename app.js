@@ -609,25 +609,27 @@ function escapeHtml(value) {
 }
 
 /* ── Theme Toggle ──────────────────────────────────── */
+/* ── Theme Toggle ──────────────────────────────────── */
 function initTheme() {
-  const saved = localStorage.getItem('quiz-theme');
-  // Default to light if no preference saved
-  applyTheme(saved || 'light');
+  const saved = localStorage.getItem('quiz-theme') || 'light';
+  applyTheme(saved);
 }
 
 function toggleTheme() {
-  const current = document.documentElement.getAttribute('data-theme');
+  const html = document.documentElement;
+  const current = html.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
   const next = current === 'light' ? 'dark' : 'light';
   applyTheme(next);
-  localStorage.setItem('quiz-theme', next);
 }
 
 function applyTheme(theme) {
-  if (theme === 'light') {
-    document.documentElement.setAttribute('data-theme', 'light');
-    $('themeToggle').textContent = '☀️';
-  } else {
-    document.documentElement.removeAttribute('data-theme');
-    $('themeToggle').textContent = '🌙';
+  const html = document.documentElement;
+  const validTheme = theme === 'dark' ? 'dark' : 'light';
+  html.setAttribute('data-theme', validTheme);
+  localStorage.setItem('quiz-theme', validTheme);
+  
+  const btn = $('themeToggle');
+  if (btn) {
+    btn.textContent = validTheme === 'light' ? '☀️' : '🌙';
   }
 }
