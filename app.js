@@ -1,26 +1,153 @@
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwqnkrz8JekRWH9DA3sMtMDzU6xQs-G_sU0PvKVuwWBmh4VkrX4HCKjqqWKIusrXWtlWQ/exec";
 
+const SECTIONS = [
+  { name: 'Ambiente de Control', icon: '🏛️', color: '#3ed6c8' },
+  { name: 'Evaluación del Riesgo', icon: '⚠️', color: '#ffca5c' },
+  { name: 'Actividades de Control', icon: '✅', color: '#83f0a8' },
+  { name: 'Información y Comunicación', icon: '📡', color: '#2b93ff' },
+  { name: 'Monitoreo', icon: '📊', color: '#ff7070' }
+];
+
 const QUESTIONS = [
-  {id:1,seccion:'Ambiente de control',pregunta:'¿En el último mes, ha consultado o aplicado el código de integridad en alguna situación laboral?',opciones:[['A','No lo conozco o no lo he usado'],['B','Lo conozco, pero no lo he aplicado recientemente'],['C','Sí, lo he aplicado en decisiones o situaciones concretas']],correcta:'C',valor:5},
-  {id:2,seccion:'Ambiente de control',pregunta:'En su trabajo diario, ¿con qué frecuencia verifica que sus actividades cumplan con lineamientos o procedimientos definidos?',opciones:[['A','Siempre (antes de finalizar la actividad)'],['B','Algunas veces'],['C','Nunca']],correcta:'A',valor:5},
-  {id:3,seccion:'Ambiente de control',pregunta:'Respecto a sus actividades (contractuales o funcionales), usted:',opciones:[['A','No tiene claridad sobre ellas'],['B','Las conoce, pero no están documentadas o no las consulta'],['C','Las tiene documentadas y las consulta cuando es necesario']],correcta:'C',valor:5},
-  {id:4,seccion:'Ambiente de control',pregunta:'Durante una actividad laboral, un compañero le sugiere omitir un paso del procedimiento para agilizar el resultado. Usted sabe que esto va en contra de los lineamientos establecidos. ¿Qué hace?',opciones:[['A','Mantiene el procedimiento establecido, explica la importancia de cumplirlo e informa la situación por los canales definidos si es necesario'],['B','Acepta la sugerencia para cumplir más rápido con la actividad'],['C','Omite el paso, pero deja evidencia para justificar la decisión'],['D','Ignora la situación y continúa con su trabajo sin intervenir']],correcta:'A',valor:5},
-  {id:5,seccion:'Evaluación del riesgo',pregunta:'En su proceso, usted:',opciones:[['A','Conoce algunos riesgos, pero no participa en su gestión'],['B','Puede identificar riesgos y ha participado en su registro o actualización'],['C','No conoce los riesgos del proceso']],correcta:'B',valor:5},
-  {id:6,seccion:'Evaluación del riesgo',pregunta:'¿En qué herramienta o medio se registran y actualizan los riesgos de su proceso?',opciones:[['A','En documentos informales o sin periodicidad definida'],['B','No se registran'],['C','En una matriz formal (ej. aplicativo institucional o archivo oficial) actualizada periódicamente']],correcta:'C',valor:5},
-  {id:7,seccion:'Evaluación del riesgo',pregunta:'Cuando identifica una situación que puede afectar el proceso, usted:',opciones:[['A','Solo informa verbalmente'],['B','Registra y reporta la situación y ejecuta acciones para prevenirlo'],['C','No realiza ninguna acción']],correcta:'B',valor:5},
-  {id:8,seccion:'Evaluación del riesgo',pregunta:'Durante la ejecución de sus actividades, identifica que un proceso podría presentar retrasos por falta de información oportuna de otra dependencia. ¿Qué hace?',opciones:[['A','Registra la situación como un posible riesgo, la reporta en los medios definidos y propone acciones para prevenir el impacto'],['B','Informa verbalmente a su jefe y continúa con sus actividades'],['C','Espera a que el problema se materialice para tomar acciones'],['D','Ajusta sus actividades sin registrar ni reportar la situación']],correcta:'A',valor:5},
-  {id:9,seccion:'Actividades de control',pregunta:'Para realizar sus actividades, usted:',opciones:[['A','Consulta procedimientos documentados y los aplica'],['B','Conoce los procedimientos, pero no los consulta'],['C','No existen o no los conoce']],correcta:'A',valor:5},
-  {id:10,seccion:'Actividades de control',pregunta:'Antes de finalizar una actividad, usted:',opciones:[['A','Revisa ocasionalmente sin dejar evidencia'],['B','Revisa, valida o deja evidencia (correo, registro, sistema)'],['C','No realiza verificación']],correcta:'B',valor:5},
-  {id:11,seccion:'Actividades de control',pregunta:'Su trabajo es:',opciones:[['A','Revisado o validado por otra instancia o persona y queda evidencia'],['B','Revisado ocasionalmente'],['C','No es revisado']],correcta:'A',valor:5},
-  {id:12,seccion:'Actividades de control',pregunta:'Usted está finalizando un informe y nota que un dato clave no coincide con la fuente original. El tiempo de entrega es limitado y su jefe no está disponible. ¿Qué hace?',opciones:[['A','Verifica la información, corrige el dato y deja evidencia del ajuste realizado antes de entregar el informe'],['B','Entrega el informe como está y luego informa la inconsistencia'],['C','Ajusta el dato sin verificar la fuente para cumplir con el tiempo'],['D','Decide no entregar el informe hasta tener respuesta de su jefe']],correcta:'A',valor:5},
-  {id:13,seccion:'Información y comunicación',pregunta:'Para realizar sus actividades, usted:',opciones:[['A','Accede a información actualizada en sistemas, correos o documentos oficiales'],['B','Usa información parcialmente actualizada'],['C','No cuenta con información clara']],correcta:'A',valor:5},
-  {id:14,seccion:'Información y comunicación',pregunta:'Cuando recibe información para trabajar, usted:',opciones:[['A','La usa sin validación previa'],['B','Ha identificado errores frecuentes'],['C','Verifica que esté completa y actualizada antes de usarla']],correcta:'C',valor:5},
-  {id:15,seccion:'Información y comunicación',pregunta:'Si identifica una irregularidad, usted:',opciones:[['A','La comunica verbalmente'],['B','La reporta por canales formales (correo, sistema, jefe)'],['C','No la reporta']],correcta:'B',valor:5},
-  {id:16,seccion:'Información y comunicación',pregunta:'Usted recibe un correo con información necesaria para elaborar un informe, pero nota que algunos datos están incompletos y podrían afectar el resultado final. El plazo de entrega es cercano. ¿Qué hace?',opciones:[['A','Completa el informe con la información disponible para cumplir con el plazo'],['B','Verifica la información, solicita aclaración por un canal formal y deja evidencia antes de continuar con el informe'],['C','Ajusta los datos según su criterio para evitar retrasos'],['D','Espera a que le envíen la información completa sin realizar ninguna acción']],correcta:'B',valor:5},
-  {id:17,seccion:'Monitoreo',pregunta:'En relación con la revisión de resultados de actividades o procesos, ¿cuál de las siguientes situaciones describe mejor su participación?',opciones:[['A','Participa en espacios donde se revisan resultados y se dejan registros o evidencias de las conclusiones'],['B','Conoce que se realizan revisiones, pero no participa activamente'],['C','No tiene conocimiento de revisiones periódicas']],correcta:'A',valor:5},
-  {id:18,seccion:'Monitoreo',pregunta:'Frente a los resultados de auditorías internas o externas, ¿cuál es su nivel de involucramiento?',opciones:[['A','Tiene conocimiento general de los resultados, sin participación directa'],['B','No conoce los resultados de auditorías'],['C','Participa en la formulación o ejecución de acciones de mejora y conoce su estado']],correcta:'C',valor:5},
-  {id:19,seccion:'Monitoreo',pregunta:'En el seguimiento a un plan de mejoramiento, observa que una acción no se ha cumplido en el plazo establecido. ¿Qué hace?',opciones:[['A','Da por cerrada la acción para evitar retrasos en el informe'],['B','Espera a que el responsable actualice la información sin intervenir'],['C','Registra el incumplimiento, solicita actualización al responsable y verifica el nuevo compromiso hasta su cumplimiento'],['D','Informa de manera informal sin dejar evidencia']],correcta:'C',valor:5},
-  {id:20,seccion:'Monitoreo',pregunta:'En su área se manejan indicadores de seguimiento (cumplimiento, tiempos, resultados). ¿Qué hace cuando observa que uno de ellos presenta un comportamiento inusual o negativo?',opciones:[['A','Lo ignora porque no afecta directamente sus actividades'],['B','Consulta el indicador, analiza posibles causas y reporta la situación para su revisión y seguimiento'],['C','Espera a que en los informes periódicos alguien más lo revise'],['D','Ajusta sus actividades sin revisar el indicador ni reportarlo']],correcta:'B',valor:5}
+  // Sección 1: Ambiente de Control
+  {
+    id: 1,
+    seccion: 'Ambiente de Control',
+    pregunta: 'Cuando en el desarrollo de sus actividades laborales enfrenta una situación donde un compañero propone omitir un paso del procedimiento para agilizar el resultado, ¿cuál es la acción que mejor refleja el compromiso con el control interno?',
+    opciones: [
+      ['A', 'Aceptar la sugerencia para cumplir más rápido con la actividad.'],
+      ['B', 'Mantener el procedimiento establecido, explicar la importancia de cumplirlo e informar la situación por los canales definidos si es necesario.'],
+      ['C', 'Omitir el paso, pero dejar evidencia para justificar la decisión.'],
+      ['D', 'Ignorar la situación y continuar con tu trabajo sin intervenir.']
+    ],
+    correcta: 'B',
+    valor: 10
+  },
+  {
+    id: 2,
+    seccion: 'Ambiente de Control',
+    pregunta: 'Cuando realiza sus actividades diarias y debe asegurar el cumplimiento de lineamientos institucionales, ¿cuál de las siguientes prácticas refleja una adecuada cultura de control?',
+    opciones: [
+      ['A', 'Ejecutar las actividades sin verificar los lineamientos para optimizar el tiempo.'],
+      ['B', 'Revisar los procedimientos solo si surge alguna duda.'],
+      ['C', 'Verificar de manera constante que sus actividades cumplan con los procedimientos definidos antes de finalizarlas.'],
+      ['D', 'Delegar la revisión de cumplimiento a otros compañeros.']
+    ],
+    correcta: 'C',
+    valor: 10
+  },
+
+  // Sección 2: Evaluación del Riesgo
+  {
+    id: 3,
+    seccion: 'Evaluación del Riesgo',
+    pregunta: 'Cuando identifica una situación que podría afectar el cumplimiento de un proceso, ¿cuál es la acción que mejor refleja una adecuada gestión del riesgo?',
+    opciones: [
+      ['A', 'Informar verbalmente a un compañero y continuar con sus actividades.'],
+      ['B', 'No realizar ninguna acción hasta que el riesgo se materialice.'],
+      ['C', 'Registrar y reportar la situación en los medios definidos y ejecutar acciones para prevenir su impacto.'],
+      ['D', 'Ajustar sus actividades sin registrar ni reportar la situación.']
+    ],
+    correcta: 'C',
+    valor: 10
+  },
+  {
+    id: 4,
+    seccion: 'Evaluación del Riesgo',
+    pregunta: 'Durante la ejecución de sus actividades, detecta que un proceso podría retrasarse por falta de información de otra dependencia. ¿Cómo actúa?',
+    opciones: [
+      ['A', 'Esperar a que el problema ocurra para tomar acciones.'],
+      ['B', 'Informar verbalmente a su jefe y continuar con sus tareas.'],
+      ['C', 'Registrar la situación como riesgo, reportarla en los medios definidos y proponer acciones preventivas.'],
+      ['D', 'Ajustar sus actividades sin dejar evidencia ni reporte.']
+    ],
+    correcta: 'C',
+    valor: 10
+  },
+
+  // Sección 3: Actividades de Control
+  {
+    id: 5,
+    seccion: 'Actividades de Control',
+    pregunta: 'Cuando está finalizando un informe y detecta que un dato clave no coincide con la fuente original, ¿cuál es la acción que mejor refleja un adecuado autocontrol?',
+    opciones: [
+      ['A', 'Entregar el informe y luego informar la inconsistencia.'],
+      ['B', 'Verificar la información, corregir el dato y dejar evidencia antes de entregar el informe.'],
+      ['C', 'Ajustar el dato sin verificar la fuente para cumplir con el tiempo.'],
+      ['D', 'No entregar el informe hasta tener respuesta de su jefe.']
+    ],
+    correcta: 'B',
+    valor: 10
+  },
+  {
+    id: 6,
+    seccion: 'Actividades de Control',
+    pregunta: 'Antes de finalizar una actividad, ¿qué acción refleja una adecuada aplicación de controles?',
+    opciones: [
+      ['A', 'No realizar verificación para ahorrar tiempo.'],
+      ['B', 'Revisar ocasionalmente sin dejar evidencia.'],
+      ['C', 'Revisar, validar la actividad y dejar evidencia (correo, registro o sistema).'],
+      ['D', 'Confiar únicamente en que la actividad está correcta.']
+    ],
+    correcta: 'C',
+    valor: 10
+  },
+
+  // Sección 4: Información y Comunicación
+  {
+    id: 7,
+    seccion: 'Información y Comunicación',
+    pregunta: 'Cuando recibe información para desarrollar una actividad y detecta que está incompleta, ¿qué acción refleja una adecuada gestión de la información?',
+    opciones: [
+      ['A', 'Completar el trabajo con la información disponible.'],
+      ['B', 'Ajustar los datos según su criterio para evitar retrasos.'],
+      ['C', 'Verificar la información, solicitar aclaración por un canal formal y dejar evidencia antes de continuar.'],
+      ['D', 'Esperar sin realizar ninguna acción.']
+    ],
+    correcta: 'C',
+    valor: 10
+  },
+  {
+    id: 8,
+    seccion: 'Información y Comunicación',
+    pregunta: 'Si durante sus actividades identifica una irregularidad en la información, ¿cómo actúa?',
+    opciones: [
+      ['A', 'Comunicarla verbalmente.'],
+      ['B', 'No reportarla para evitar inconvenientes.'],
+      ['C', 'Reportarla por canales formales como correo, sistema o jefe inmediato.'],
+      ['D', 'Ignorarla si no afecta directamente tu trabajo.']
+    ],
+    correcta: 'C',
+    valor: 10
+  },
+
+  // Sección 5: Monitoreo
+  {
+    id: 9,
+    seccion: 'Monitoreo',
+    pregunta: 'En el seguimiento a un plan de mejoramiento, identifica que una acción no se ha cumplido en el plazo establecido. ¿Qué hace?',
+    opciones: [
+      ['A', 'Dar por cerrada la acción para evitar retrasos en el informe.'],
+      ['B', 'Esperar a que el responsable actualice la información.'],
+      ['C', 'Registrar el incumplimiento, solicitar actualización y verificar el nuevo compromiso hasta su cumplimiento.'],
+      ['D', 'Informar de manera informal sin dejar evidencia.']
+    ],
+    correcta: 'C',
+    valor: 10
+  },
+  {
+    id: 10,
+    seccion: 'Monitoreo',
+    pregunta: 'Cuando observa que un indicador presenta un comportamiento inusual o negativo, ¿cuál es la acción más adecuada?',
+    opciones: [
+      ['A', 'Ignorarlo porque no afecta directamente sus funciones.'],
+      ['B', 'Esperar a que alguien más lo revise en informes periódicos.'],
+      ['C', 'Analizar el indicador, identificar posibles causas y reportar la situación para su seguimiento.'],
+      ['D', 'Ajustar sus actividades sin revisar el indicador.']
+    ],
+    correcta: 'C',
+    valor: 10
+  }
 ];
 
 const state = {
@@ -36,7 +163,8 @@ const state = {
   timeLeft: 25,
   timer: null,
   startAt: null,
-  leaderboard: []
+  leaderboard: [],
+  currentSection: null
 };
 
 const $ = (id) => document.getElementById(id);
@@ -51,6 +179,11 @@ document.addEventListener('DOMContentLoaded', () => {
   $('statQuestions').textContent = QUESTIONS.length;
   $('statTime').textContent = `${state.timePerQuestion} s`;
   $('timerText').textContent = state.timePerQuestion;
+
+  // Theme toggle
+  initTheme();
+  $('themeToggle').addEventListener('click', toggleTheme);
+
   loadLeaderboard();
 });
 
@@ -67,7 +200,7 @@ function startQuiz(){
     return;
   }
   state.participant = { secretaria, nombre };
-  state.questions = shuffleQuestions(QUESTIONS);
+  state.questions = prepareQuestions(QUESTIONS);
   state.currentIndex = 0;
   state.selectedAnswer = null;
   state.score = 0;
@@ -75,9 +208,18 @@ function startQuiz(){
   state.bestStreak = 0;
   state.answers = [];
   state.startAt = Date.now();
+  state.currentSection = null;
   updateHud();
   showScreen('screenQuiz');
   renderQuestion();
+}
+
+/* Prepares questions keeping section order but shuffling options within each question */
+function prepareQuestions(source){
+  return source.map(q => ({
+    ...q,
+    opciones: shuffleArray([...q.opciones])
+  }));
 }
 
 function renderQuestion(){
@@ -86,9 +228,26 @@ function renderQuestion(){
     finishQuiz();
     return;
   }
+
+  const newSection = q.seccion;
+  const isNewSection = state.currentSection !== newSection;
+  state.currentSection = newSection;
+
+  if(isNewSection){
+    showSectionTransition(newSection, () => {
+      displayQuestion(q);
+    });
+  } else {
+    animateQuestionSwap(() => {
+      displayQuestion(q);
+    });
+  }
+}
+
+function displayQuestion(q){
   $('sectionChip').textContent = q.seccion;
   $('countChip').textContent = `Pregunta ${state.currentIndex + 1} de ${state.questions.length}`;
-  $('bonusChip').textContent = `+${q.valor} base`;
+  $('bonusChip').textContent = `+${q.valor} pts`;
   $('questionTitle').textContent = q.pregunta;
   $('helperText').textContent = 'Selecciona una respuesta antes de continuar.';
   $('nextBtn').disabled = true;
@@ -98,19 +257,90 @@ function renderQuestion(){
 
   const grid = $('optionsGrid');
   grid.innerHTML = '';
-  q.opciones.forEach(([key, text]) => {
+  q.opciones.forEach(([key, text], i) => {
     const btn = document.createElement('button');
     btn.className = 'option-card';
+    btn.style.animationDelay = `${i * 80}ms`;
     btn.innerHTML = `
-      <div class="option-key">${key}</div>
-      <div>${escapeHtml(text)}</div>
+      <div class="option-text">${escapeHtml(text)}</div>
       <div class="option-mark"></div>
     `;
     btn.addEventListener('click', () => selectAnswer(key, btn));
     grid.appendChild(btn);
   });
 
+  // Add entrance animation to options
+  grid.querySelectorAll('.option-card').forEach(card => {
+    card.classList.add('option-enter');
+    card.addEventListener('animationend', () => card.classList.remove('option-enter'), { once: true });
+  });
+
   startTimer();
+}
+
+/* Animate question swap (within same section) */
+function animateQuestionSwap(callback){
+  const quizCard = document.querySelector('.quiz-card');
+  quizCard.classList.add('question-exit');
+  setTimeout(() => {
+    quizCard.classList.remove('question-exit');
+    quizCard.classList.add('question-enter');
+    callback();
+    setTimeout(() => quizCard.classList.remove('question-enter'), 400);
+  }, 250);
+}
+
+/* Shows a full-screen section transition animation */
+function showSectionTransition(sectionName, callback){
+  const sectionData = SECTIONS.find(s => s.name === sectionName) || SECTIONS[0];
+  const sectionIndex = SECTIONS.findIndex(s => s.name === sectionName);
+  const overlay = $('sectionOverlay');
+
+  // Set content
+  $('sectionTransIcon').textContent = sectionData.icon;
+  $('sectionTransName').textContent = sectionData.name;
+  $('sectionTransNumber').textContent = `Sección ${sectionIndex + 1} de ${SECTIONS.length}`;
+
+  // Set accent color
+  overlay.style.setProperty('--section-accent', sectionData.color);
+
+  // Build progress dots
+  const dotsContainer = $('sectionTransDots');
+  dotsContainer.innerHTML = SECTIONS.map((s, i) =>
+    `<div class="section-dot ${i <= sectionIndex ? 'active' : ''}" style="--dot-color: ${s.color}"></div>`
+  ).join('');
+
+  // Create floating particles
+  spawnSectionParticles(overlay, sectionData.color);
+
+  // Show overlay
+  overlay.classList.add('visible');
+
+  // Auto-hide after animation
+  setTimeout(() => {
+    overlay.classList.add('leaving');
+    setTimeout(() => {
+      overlay.classList.remove('visible', 'leaving');
+      callback();
+    }, 500);
+  }, 2000);
+}
+
+/* Spawn floating particles for section transition */
+function spawnSectionParticles(container, color){
+  const particleLayer = container.querySelector('.section-particles');
+  particleLayer.innerHTML = '';
+  for(let i = 0; i < 20; i++){
+    const p = document.createElement('span');
+    p.className = 'section-particle';
+    p.style.left = `${Math.random() * 100}%`;
+    p.style.top = `${Math.random() * 100}%`;
+    p.style.width = p.style.height = `${4 + Math.random() * 10}px`;
+    p.style.background = color;
+    p.style.animationDelay = `${Math.random() * 1.2}s`;
+    p.style.animationDuration = `${1.5 + Math.random() * 1.5}s`;
+    particleLayer.appendChild(p);
+  }
 }
 
 function selectAnswer(letter, button){
@@ -138,8 +368,7 @@ function registerAnswer(selected){
   clearInterval(state.timer);
   const q = state.questions[state.currentIndex];
   const isCorrect = selected === q.correcta;
-  const bonus = isCorrect ? Math.max(1, Math.round((state.timeLeft / state.timePerQuestion) * 5)) : 0;
-  const gained = isCorrect ? q.valor + bonus : 0;
+  const gained = isCorrect ? q.valor : 0;
 
   if(isCorrect){
     state.score += gained;
@@ -305,17 +534,12 @@ function resetExperience(){
   state.bestStreak = 0;
   state.answers = [];
   state.startAt = null;
+  state.currentSection = null;
   updateHud();
   $('progressBar').style.width = '0%';
   $('progressText').textContent = 'Listo para iniciar';
   $('timerText').textContent = state.timePerQuestion;
   showScreen('screenWelcome');
-}
-
-function shuffleQuestions(source){
-  return source
-    .map(q => ({ ...q, opciones: shuffleArray([...q.opciones]) }))
-    .sort(() => Math.random() - 0.5);
 }
 
 function shuffleArray(arr){
@@ -380,4 +604,28 @@ function toast(message){
 
 function escapeHtml(value){
   return String(value || '').replace(/[&<>"']/g, (m) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+/* ── Theme Toggle ──────────────────────────────────── */
+function initTheme(){
+  const saved = localStorage.getItem('quiz-theme');
+  // Default to light if no preference saved
+  applyTheme(saved || 'light');
+}
+
+function toggleTheme(){
+  const current = document.documentElement.getAttribute('data-theme');
+  const next = current === 'light' ? 'dark' : 'light';
+  applyTheme(next);
+  localStorage.setItem('quiz-theme', next);
+}
+
+function applyTheme(theme){
+  if(theme === 'light'){
+    document.documentElement.setAttribute('data-theme', 'light');
+    $('themeToggle').textContent = '☀️';
+  } else {
+    document.documentElement.removeAttribute('data-theme');
+    $('themeToggle').textContent = '🌙';
+  }
 }

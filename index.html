@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
+  <button class="theme-toggle" id="themeToggle" title="Cambiar tema">☀️</button>
   <div class="app-shell">
     <aside class="sidebar glass">
       <div class="brand-block">
@@ -24,7 +25,7 @@
       <div class="sidebar-cards">
         <div class="mini-card">
           <span>Preguntas</span>
-          <strong id="statQuestions">20</strong>
+          <strong id="statQuestions">10</strong>
         </div>
         <div class="mini-card">
           <span>Tiempo</span>
@@ -68,11 +69,33 @@
 
       <section class="screen active" id="screenWelcome">
         <div class="hero-card card">
-          <span class="eyebrow">bienvenida</span>
-          <h2>Participa en el reto institucional</h2>
-          <p>Responde el diagnóstico inicial en formato de torneo, con puntaje, velocidad, racha y podio final. Tus respuestas se guardarán automáticamente en Google Sheets.</p>
-          <div class="actions">
-            <button class="btn btn-primary" id="startBtn">Comenzar</button>
+          <div class="hero-decorations">
+            <div class="hero-orb hero-orb-1"></div>
+            <div class="hero-orb hero-orb-2"></div>
+            <div class="hero-orb hero-orb-3"></div>
+          </div>
+          <div class="hero-content">
+            <div class="hero-icon">🏥</div>
+            <span class="eyebrow">quiz interactivo · control interno</span>
+            <h2 class="hero-title">Clínica del Control<br>y la Prevención</h2>
+            <p class="hero-desc">Pon a prueba tus conocimientos sobre control interno en este reto institucional. Responde 10 preguntas en 5 secciones y descubre tu nivel.</p>
+            <div class="hero-features">
+              <div class="hero-feature">
+                <span class="hero-feature-icon">📋</span>
+                <span>10 preguntas</span>
+              </div>
+              <div class="hero-feature">
+                <span class="hero-feature-icon">⏱️</span>
+                <span>25s por pregunta</span>
+              </div>
+              <div class="hero-feature">
+                <span class="hero-feature-icon">🏆</span>
+                <span>Ranking en vivo</span>
+              </div>
+            </div>
+            <div class="actions">
+              <button class="btn btn-primary btn-hero" id="startBtn">Comenzar el reto →</button>
+            </div>
           </div>
         </div>
       </section>
@@ -103,8 +126,8 @@
         <div class="card quiz-card">
           <div class="question-meta">
             <span class="chip" id="sectionChip">Sección</span>
-            <span class="chip" id="countChip">Pregunta 1 de 20</span>
-            <span class="chip success" id="bonusChip">+5 base</span>
+            <span class="chip" id="countChip">Pregunta 1 de 10</span>
+            <span class="chip success" id="bonusChip">+10 pts</span>
           </div>
           <div class="streak-banner" id="streakBanner">🔥 Racha actual: 0</div>
           <h2 class="question-title" id="questionTitle"></h2>
@@ -145,6 +168,17 @@
         </div>
       </section>
     </main>
+  </div>
+
+  <!-- Section Transition Overlay -->
+  <div id="sectionOverlay" class="section-overlay">
+    <div class="section-particles"></div>
+    <div class="section-overlay-content">
+      <div class="section-trans-icon" id="sectionTransIcon">🏛️</div>
+      <div class="section-trans-number" id="sectionTransNumber">Sección 1 de 5</div>
+      <h2 class="section-trans-name" id="sectionTransName">Ambiente de Control</h2>
+      <div class="section-trans-dots" id="sectionTransDots"></div>
+    </div>
   </div>
 
   <div id="toast" class="toast"></div>
