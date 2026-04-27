@@ -1,5 +1,6 @@
 /* ── Dark Theme (default) ─────────────────────────── */
-:root, [data-theme="dark"] {
+:root,
+[data-theme="dark"] {
   --bg: #0a1a26;
   --bg-2: #0e2330;
   --surface: rgba(255, 255, 255, .08);
