@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Resultados — Clínica del Control y la Prevención</title>
+  <meta name="description" content="Explora y filtra los resultados del quiz institucional Clínica del Control y la Prevención. Visualiza estadísticas por secretaría, nivel y puntaje." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="./resultados.css" />
+</head>
+
+<body>
+  <button class="theme-toggle" id="themeToggle" title="Cambiar tema">☀️</button>
+
+  <div class="results-shell">
+
+    <!-- ═══ Header ═══ -->
+    <header class="results-header glass fade-in">
+      <div class="header-icon">📊</div>
+      <div class="header-text">
+        <span class="eyebrow">panel de resultados</span>
+        <h1>Clínica del Control y la Prevención</h1>
+      </div>
+      <div class="header-actions">
+        <a href="./index.html" class="btn btn-secondary" id="backQuizBtn">← Volver al quiz</a>
+        <button class="btn btn-primary" id="exportCsvBtn">📥 Exportar CSV</button>
+      </div>
+    </header>
+
+    <!-- ═══ KPI Cards ═══ -->
+    <section class="kpi-grid fade-in">
+      <div class="kpi-card stagger-1" style="--kpi-accent: var(--primary)">
+        <span class="kpi-icon">👥</span>
+        <span class="kpi-label">Participantes</span>
+        <span class="kpi-value" id="kpiTotal">0</span>
+      </div>
+      <div class="kpi-card stagger-2" style="--kpi-accent: var(--secondary)">
+        <span class="kpi-icon">🏆</span>
+        <span class="kpi-label">Puntaje promedio</span>
+        <span class="kpi-value" id="kpiAvgScore">0</span>
+      </div>
+      <div class="kpi-card stagger-3" style="--kpi-accent: var(--warning)">
+        <span class="kpi-icon">📈</span>
+        <span class="kpi-label">Porcentaje promedio</span>
+        <span class="kpi-value" id="kpiAvgPct">0%</span>
+      </div>
+      <div class="kpi-card stagger-4" style="--kpi-accent: var(--danger)">
+        <span class="kpi-icon">🔥</span>
+        <span class="kpi-label">Mejor racha</span>
+        <span class="kpi-value" id="kpiMaxStreak">0</span>
+      </div>
+    </section>
+
+    <!-- ═══ Filters ═══ -->
+    <section class="filter-panel glass fade-in" id="filterPanel">
+      <div class="filter-panel-header">
+        <h2>🔍 Filtros</h2>
+        <button class="btn btn-ghost" id="clearFiltersBtn">Limpiar filtros</button>
+      </div>
+
+      <div class="filter-row">
+        <div class="filter-group">
+          <label for="filterSearch">Buscar por nombre</label>
+          <input type="text" id="filterSearch" placeholder="Ej. Juan Pérez..." />
+        </div>
+
+        <div class="filter-group">
+          <label for="filterSecretaria">Secretaría</label>
+          <select id="filterSecretaria">
+            <option value="">Todas las secretarías</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>Rango de puntaje</label>
+          <div class="score-range-row">
+            <input type="number" id="filterScoreMin" placeholder="0" min="0" max="100" />
+            <span>—</span>
+            <input type="number" id="filterScoreMax" placeholder="100" min="0" max="100" />
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top: 16px;">
+        <label style="font-size: .82rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; display: block; margin-bottom: 8px;">Nivel</label>
+        <div class="level-chips">
+          <button class="level-chip" data-level="Fortalecido">🟢 Fortalecido</button>
+          <button class="level-chip" data-level="En desarrollo">🟡 En desarrollo</button>
+          <button class="level-chip" data-level="Inicial">🔴 Inicial</button>
+        </div>
+      </div>
+
+      <div class="active-filters" id="activeFilters"></div>
+    </section>
+
+    <!-- ═══ Charts ═══ -->
+    <section class="charts-row fade-in">
+      <div class="chart-card glass">
+        <h3>📊 Distribución por nivel</h3>
+        <div class="donut-chart-wrapper">
+          <div class="donut-chart" id="donutChart">
+            <div class="donut-center"><span id="donutTotal">0</span></div>
+          </div>
+          <div class="donut-legend" id="donutLegend"></div>
+        </div>
+      </div>
+
+      <div class="chart-card glass">
+        <h3>🏢 Por secretaría (top 8)</h3>
+        <div class="bar-chart" id="secretariaChart">
+          <div class="empty-state">Cargando...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ Results Table ═══ -->
+    <section class="table-panel glass fade-in">
+      <div class="table-header-bar">
+        <h2>📋 Resultados detallados</h2>
+        <span class="result-count" id="resultCount">0 resultados</span>
+      </div>
+
+      <div class="loading-spinner" id="loadingIndicator"></div>
+
+      <div class="table-scroll">
+        <table class="results-table" id="resultsTable">
+          <thead>
+            <tr>
+              <th data-sort="rank"># <span class="sort-indicator">↕</span></th>
+              <th data-sort="nombre">Nombre <span class="sort-indicator">↕</span></th>
+              <th data-sort="secretaria">Secretaría <span class="sort-indicator">↕</span></th>
+              <th data-sort="score" class="sorted">Puntaje <span class="sort-indicator">↓</span></th>
+              <th data-sort="percentage">% <span class="sort-indicator">↕</span></th>
+              <th data-sort="level">Nivel <span class="sort-indicator">↕</span></th>
+              <th data-sort="timeSpent">Tiempo <span class="sort-indicator">↕</span></th>
+              <th data-sort="bestStreak">Racha <span class="sort-indicator">↕</span></th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ═══ Footer ═══ -->
+    <footer class="results-footer fade-in">
+      <a href="./index.html" class="btn btn-secondary">← Volver al quiz</a>
+      <button class="btn btn-ghost" onclick="loadData()">🔄 Refrescar datos</button>
+    </footer>
+
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="./resultados.js"></script>
+</body>
+
+</html>
