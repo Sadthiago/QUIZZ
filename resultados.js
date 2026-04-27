@@ -29,6 +29,9 @@ const $ = (id) => document.getElementById(id);
  *     Pon las más específicas arriba.
  */
 const SECRETARIA_ALIASES = [
+  { keywords: ['uaegrd'], canonical: 'UAEGRD' },
+  { keywords: ['uaegrc'], canonical: 'UAEGRD' },
+  { keywords: ['gestion', 'riesgo'], canonical: 'UAEGRD' },
   { keywords: ['hacienda'], canonical: 'Secretaría de Hacienda' },
   { keywords: ['gobierno'], canonical: 'Secretaría de Gobierno' },
   { keywords: ['salud'], canonical: 'Secretaría de Salud' },
@@ -75,21 +78,27 @@ function stripDiacritics(str) {
  * 3. Si no encuentra, aplica Title Case al original.
  */
 function normalizeSecretaria(raw) {
-  if (!raw || !raw.trim()) return 'Sin dato';
+  try {
+    const val = String(raw || '').trim();
+    if (!val) return 'Sin dato';
 
-  const cleaned = stripDiacritics(raw.trim().replace(/\s+/g, ' '));
+    const cleaned = stripDiacritics(val.replace(/\s+/g, ' '));
 
-  for (const alias of SECRETARIA_ALIASES) {
-    if (alias.keywords.every(kw => cleaned.includes(kw))) {
-      return alias.canonical;
+    for (const alias of SECRETARIA_ALIASES) {
+      if (alias.keywords.every(kw => cleaned.includes(kw))) {
+        return alias.canonical;
+      }
     }
-  }
 
-  // Fallback: Title Case del valor original (preservando letras originales)
-  return raw.trim().replace(/\s+/g, ' ')
-    .replace(/\w\S*/g, w =>
-      w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()
-    );
+    // Fallback: Title Case
+    return val.replace(/\s+/g, ' ')
+      .replace(/\w\S*/g, w =>
+        w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()
+      );
+  } catch (e) {
+    console.warn('Error normalizando secretaria:', e);
+    return String(raw || 'Sin dato');
+  }
 }
 
 /* ── State ───────────────────────────────────────── */
@@ -145,21 +154,30 @@ async function loadData() {
   $('loadingIndicator').style.display = 'block';
 
   try {
-    const response = await fetch(APPS_SCRIPT_URL);
+    // La API de Apps Script ahora devuelve todos los resultados (?all=true)
+    const response = await fetch(`${APPS_SCRIPT_URL}?all=true`);
     const data = await response.json();
     const leaderboard = Array.isArray(data.leaderboard) ? data.leaderboard : [];
 
-    state.allData = leaderboard.map((item, i) => ({
-      rank: i + 1,
-      nombre: item.nombre || 'Participante',
-      secretaria: normalizeSecretaria(item.secretaria),
-      secretariaOriginal: item.secretaria || 'Sin dato', // preserva el valor original
-      score: Number(item.score || 0),
-      percentage: Number(item.percentage || 0),
-      level: item.level || 'Inicial',
-      timeSpent: Number(item.timeSpent || 0),
-      bestStreak: Number(item.bestStreak || 0)
-    }));
+    state.allData = leaderboard.map((item, i) => {
+      const rawSecretaria = item.secretaria || 'Sin dato';
+      return {
+        rank: i + 1,
+        nombre: item.nombre || 'Participante',
+        secretaria: normalizeSecretaria(rawSecretaria),
+        secretariaOriginal: rawSecretaria,
+        score: Number(item.score || 0),
+        percentage: Number(item.percentage || 0),
+        level: item.level || 'Inicial',
+        timeSpent: Number(item.timeSpent || 0),
+        bestStreak: Number(item.bestStreak || 0)
+      };
+    }).filter(item =>
+      !['PRUEBA', 'prueba', 'x', '.', 'Participante'].includes(item.nombre)
+    );
+
+    // Re-asignar ranks después del filtro
+    state.allData.forEach((r, idx) => r.rank = idx + 1);
 
     populateSecretariaFilter();
     applyFilters();
@@ -171,11 +189,30 @@ async function loadData() {
       <tr><td colspan="8">
         <div class="empty-state">
           <span class="empty-icon">⚠️</span>
-          No fue posible cargar los datos. Verifica la conexión o los permisos de Apps Script.
+          Error al cargar datos desde la API: ${error.message}
         </div>
       </td></tr>`;
-    toast('Error al cargar datos');
+    toast('Error: ' + error.message);
   }
+}
+
+function parseCsvLine(line) {
+  const result = [];
+  let cur = "";
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i];
+    if (char === '"') {
+      inQuotes = !inQuotes;
+    } else if (char === ',' && !inQuotes) {
+      result.push(cur.trim());
+      cur = "";
+    } else {
+      cur += char;
+    }
+  }
+  result.push(cur.trim());
+  return result;
 }
 
 /* ── Populate Secretaría dropdown ────────────────── */
@@ -518,4 +555,13 @@ function escapeHtml(value) {
 function debounce(fn, ms) {
   let timer;
   return (...args) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), ms); };
+}
+
+function maskName(name) {
+  if (!name || name === 'Participante' || name === 'PRUEBA') return name;
+  const parts = name.trim().split(/\s+/);
+  if (parts.length <= 1) return parts[0];
+  const firstName = parts[0];
+  const lastInitial = parts[1][0] ? parts[1][0].toUpperCase() + '.' : '';
+  return `${firstName} ${lastInitial}`;
 }

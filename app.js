@@ -150,6 +150,62 @@ const QUESTIONS = [
   }
 ];
 
+/* ── Normalización de Secretarías ── */
+const SECRETARIA_ALIASES = [
+  { keywords: ['uaegrd'], canonical: 'UAEGRD' },
+  { keywords: ['uaegrc'], canonical: 'UAEGRD' },
+  { keywords: ['gestion', 'riesgo'], canonical: 'UAEGRD' },
+  { keywords: ['hacienda'], canonical: 'Secretaría de Hacienda' },
+  { keywords: ['gobierno'], canonical: 'Secretaría de Gobierno' },
+  { keywords: ['salud'], canonical: 'Secretaría de Salud' },
+  { keywords: ['educacion'], canonical: 'Secretaría de Educación' },
+  { keywords: ['planeacion'], canonical: 'Secretaría de Planeación' },
+  { keywords: ['infraestructura'], canonical: 'Secretaría de Infraestructura' },
+  { keywords: ['desarrollo', 'social'], canonical: 'Secretaría de Desarrollo Social' },
+  { keywords: ['desarrollo', 'economico'], canonical: 'Secretaría de Desarrollo Económico' },
+  { keywords: ['ambiente'], canonical: 'Secretaría de Ambiente' },
+  { keywords: ['medio', 'ambiente'], canonical: 'Secretaría de Medio Ambiente' },
+  { keywords: ['cultura'], canonical: 'Secretaría de Cultura' },
+  { keywords: ['deporte'], canonical: 'Secretaría del Deporte' },
+  { keywords: ['juridica'], canonical: 'Secretaría Jurídica' },
+  { keywords: ['administrativa'], canonical: 'Secretaría Administrativa' },
+  { keywords: ['general'], canonical: 'Secretaría General' },
+  { keywords: ['tic'], canonical: 'Secretaría TIC' },
+  { keywords: ['tecnologia'], canonical: 'Secretaría TIC' },
+  { keywords: ['mujer'], canonical: 'Secretaría de la Mujer' },
+  { keywords: ['movilidad'], canonical: 'Secretaría de Movilidad' },
+  { keywords: ['vivienda'], canonical: 'Secretaría de Vivienda' },
+  { keywords: ['seguridad'], canonical: 'Secretaría de Seguridad' },
+  { keywords: ['transparencia'], canonical: 'Secretaría de Transparencia' },
+  { keywords: ['interior'], canonical: 'Secretaría del Interior' },
+  { keywords: ['agricultura'], canonical: 'Secretaría de Agricultura' },
+  { keywords: ['turismo'], canonical: 'Secretaría de Turismo' },
+  { keywords: ['participacion'], canonical: 'Secretaría de Participación' },
+  { keywords: ['control', 'interno'], canonical: 'Oficina de Control Interno' },
+  { keywords: ['contraloria'], canonical: 'Contraloría' },
+  { keywords: ['personeria'], canonical: 'Personería' },
+];
+
+function stripDiacritics(str) {
+  return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+}
+
+function normalizeSecretaria(raw) {
+  try {
+    const val = String(raw || '').trim();
+    if (!val) return 'Sin dato';
+    const cleaned = stripDiacritics(val.replace(/\s+/g, ' '));
+    for (const alias of SECRETARIA_ALIASES) {
+      if (alias.keywords.every(kw => cleaned.includes(kw))) {
+        return alias.canonical;
+      }
+    }
+    return val.replace(/\s+/g, ' ').replace(/\w\S*/g, w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
+  } catch (e) {
+    return String(raw || 'Sin dato');
+  }
+}
+
 const state = {
   participant: null,
   questions: [],
@@ -475,16 +531,56 @@ async function finishQuiz() {
 
 async function loadLeaderboard() {
   try {
-    const response = await fetch(APPS_SCRIPT_URL);
+    const response = await fetch(`${APPS_SCRIPT_URL}?all=true`);
     const data = await response.json();
     const leaderboard = Array.isArray(data.leaderboard) ? data.leaderboard : [];
-    state.leaderboard = leaderboard;
-    renderLeaderboard(leaderboard);
-    renderPodium(leaderboard);
+
+    const filteredRows = leaderboard.map(item => ({
+      ...item,
+      secretaria: normalizeSecretaria(item.secretaria)
+    })).filter(item =>
+      !['PRUEBA', 'prueba', 'x', '.', 'Participante'].includes(item.nombre)
+    );
+
+    state.leaderboard = filteredRows;
+    renderLeaderboard(filteredRows);
+    renderPodium(filteredRows);
   } catch (error) {
-    console.error(error);
+    console.error("Error cargando leaderboard:", error);
     $('leaderboard').innerHTML = '<div class="empty-state">No fue posible cargar el leaderboard.</div>';
   }
+}
+
+function parseCsvLine(line) {
+  const result = [];
+  let cur = "";
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i];
+    if (char === '"') {
+      inQuotes = !inQuotes;
+    } else if (char === ',' && !inQuotes) {
+      result.push(cur.trim());
+      cur = "";
+    } else {
+      cur += char;
+    }
+  }
+  result.push(cur.trim());
+  return result;
+}
+
+/** 
+ * Protege la privacidad mostrando solo el primer nombre y la inicial del apellido.
+ * Ejemplo: "Santiago Calderon" -> "Santiago C."
+ */
+function maskName(name) {
+  if (!name || name === 'Participante' || name === 'PRUEBA') return name;
+  const parts = name.trim().split(/\s+/);
+  if (parts.length <= 1) return parts[0];
+  const firstName = parts[0];
+  const lastInitial = parts[1][0] ? parts[1][0].toUpperCase() + '.' : '';
+  return `${firstName} ${lastInitial}`;
 }
 
 function renderLeaderboard(items) {
@@ -627,7 +723,7 @@ function applyTheme(theme) {
   const validTheme = theme === 'dark' ? 'dark' : 'light';
   html.setAttribute('data-theme', validTheme);
   localStorage.setItem('quiz-theme', validTheme);
-  
+
   const btn = $('themeToggle');
   if (btn) {
     btn.textContent = validTheme === 'light' ? '☀️' : '🌙';
