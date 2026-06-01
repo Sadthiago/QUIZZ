@@ -13,7 +13,7 @@ const QUESTIONS = [
   {
     id: 1,
     seccion: 'Ambiente de Control',
-    pregunta: 'Cuando en el desarrollo de sus actividades laborales enfrenta una situación donde un compañero propone omitir un paso del procedimiento para agilizar el resultado, ¿cuál es la acción que mejor refleja el compromiso con el control interno?',
+    pregunta: 'Un funcionario de la Secretaría de Desarrollo Social de la Gobernación de Cundinamarca gestiona la entrega de subsidios para el adulto mayor en los municipios del departamento. Ante la alta afluencia de solicitudes y la presión de la comunidad, un compañero de oficina le propone omitir la visita de validación socioeconómica en el terreno para un grupo de beneficiarios, sugiriendo aprobarlos directamente con los datos del Sisbén para acelerar el indicador de entrega.',
     opciones: [
       ['A', 'Aceptar la sugerencia para cumplir más rápido con la actividad.'],
       ['B', 'Mantener el procedimiento establecido, explicar la importancia de cumplirlo e informar la situación por los canales definidos si es necesario.'],
@@ -26,10 +26,10 @@ const QUESTIONS = [
   {
     id: 2,
     seccion: 'Ambiente de Control',
-    pregunta: 'Cuando realiza sus actividades diarias y debe asegurar el cumplimiento de lineamientos institucionales, ¿cuál de las siguientes prácticas refleja una adecuada cultura de control?',
+    pregunta: 'En la Secretaría de la Mujer y Equidad de Género de la Gobernación de Cundinamarca, el equipo técnico debe consolidar y cargar el reporte de ejecución de los programas de apoyo a las mujeres emprendedoras del departamento en la plataforma del Sistema Integrado de Gestión Institucional. Debido a la alta demanda y la cercanía del cierre de vigencia, un profesional del área se enfrenta a un volumen masivo de información documental proveniente de las distintas provincias. Al priorizar estas actividades diarias dentro de la dependencia, ¿cuál de las siguientes conductas refleja una adecuada cultura y ambiente de control por parte del funcionario en el marco del MIPG departamental?',
     opciones: [
       ['A', 'Ejecutar las actividades sin verificar los lineamientos para optimizar el tiempo.'],
-      ['B', 'Revisar los procedimientos solo si surge alguna duda.'],
+      ['B', 'Revisar los procedimientos, solo si surge alguna duda.'],
       ['C', 'Verificar de manera constante que sus actividades cumplan con los procedimientos definidos antes de finalizarlas.'],
       ['D', 'Delegar la revisión de cumplimiento a otros compañeros.']
     ],
@@ -41,7 +41,7 @@ const QUESTIONS = [
   {
     id: 3,
     seccion: 'Evaluación del Riesgo',
-    pregunta: 'Cuando identifica una situación que podría afectar el cumplimiento de un proceso, ¿cuál es la acción que mejor refleja una adecuada gestión del riesgo?',
+    pregunta: 'Un profesional de la Secretaría de Movilidad Contemporánea de la Gobernación de Cundinamarca está a cargo de consolidar las bases de datos para el recaudo de trámites de tránsito departamentales. Durante sus actividades diarias, identifica una falla intermitente en la sincronización de la plataforma digital que podría generar duplicidad en los registros o retrasos en los reportes de recaudo. El funcionario sabe que el mapa de riesgos de la secretaría tiene tipificado el "fallo tecnológico en sistemas de información masivos" como un riesgo institucional que impacta directamente el recaudo departamental. Frente a esta situación que podría afectar el cumplimiento normativo y financiero del proceso, ¿cuál es la acción que mejor refleja una adecuada gestión del riesgo por parte del servidor público?',
     opciones: [
       ['A', 'Informar verbalmente a un compañero y continuar con sus actividades.'],
       ['B', 'No realizar ninguna acción hasta que el riesgo se materialice.'],
@@ -54,7 +54,7 @@ const QUESTIONS = [
   {
     id: 4,
     seccion: 'Evaluación del Riesgo',
-    pregunta: 'Durante la ejecución de sus actividades, detecta que un proceso podría retrasarse por falta de información de otra dependencia. ¿Cómo actúa?',
+    pregunta: 'En la Secretaría de Educación de la Gobernación de Cundinamarca, un profesional técnico está a cargo de estructurar los pliegos de condiciones para la licitación del Programa de Alimentación Escolar (PAE) del próximo año. Para finalizar el documento institucional, requiere obligatoriamente un informe demográfico y socioeconómico actualizado que debe remitir la Secretaría de Planeación departamental. El funcionario detecta que la entrega de dicha información presenta retrasos internos, lo cual podría postergar la licitación y vulnerar el derecho de los estudiantes en los municipios no certificados. Ante esta situación que amenaza directamente el cumplimiento oportuno del proceso misional, ¿cómo debe actuar el funcionario bajo una adecuada cultura de gestión del riesgo en el marco del MIPG?',
     opciones: [
       ['A', 'Esperar a que el problema ocurra para tomar acciones.'],
       ['B', 'Informar verbalmente a su jefe y continuar con sus tareas.'],
@@ -69,7 +69,7 @@ const QUESTIONS = [
   {
     id: 5,
     seccion: 'Actividades de Control',
-    pregunta: 'Cuando está finalizando un informe y detecta que un dato clave no coincide con la fuente original, ¿cuál es la acción que mejor refleja un adecuado autocontrol?',
+    pregunta: 'En la Secretaría de Hacienda de la Gobernación de Cundinamarca, un profesional técnico se encuentra finalizando el reporte consolidado del recaudo del Impuesto sobre Vehículos Automotores del último trimestre. Faltando pocos minutos para cargar el documento definitivo en el sistema institucional y remitirlo a la Contraloría de Cundinamarca, el funcionario detecta que la cifra total de recaudo de la Provincia de Sabana Centro registrada en su informe no coincide con los estados de cuenta originales emitidos por la entidad bancaria recaudadora. Frente a esta inconsistencia en una actividad de control, ¿cuál de las siguientes acciones refleja un adecuado autocontrol por parte del funcionario en el ejercicio de sus funciones diarias?',
     opciones: [
       ['A', 'Entregar el informe y luego informar la inconsistencia.'],
       ['B', 'Verificar la información, corregir el dato y dejar evidencia antes de entregar el informe.'],
@@ -82,7 +82,7 @@ const QUESTIONS = [
   {
     id: 6,
     seccion: 'Actividades de Control',
-    pregunta: 'Antes de finalizar una actividad, ¿qué acción refleja una adecuada aplicación de controles?',
+    pregunta: 'En la Secretaría de Educación de la Gobernación de Cundinamarca, un profesional universitario está encargado de proyectar los actos administrativos (resoluciones) para la asignación de traslados ordinarios de personal docente en las instituciones educativas de los municipios no certificados del departamento. El proceso requiere confrontar minuciosamente la cédula de cada docente, la plaza disponible reportada en el sistema institucional y el orden de la lista de elegibles, con el fin de evitar vicios de legalidad o posteriores demandas a la entidad. Antes de finalizar y enviar formalmente los proyectos de resolución al despacho del secretario para su respectiva firma, ¿qué acción del profesional refleja una adecuada aplicación de las actividades de control en el marco del MIPG departamental?',
     opciones: [
       ['A', 'No realizar verificación para ahorrar tiempo.'],
       ['B', 'Revisar ocasionalmente sin dejar evidencia.'],
@@ -97,7 +97,7 @@ const QUESTIONS = [
   {
     id: 7,
     seccion: 'Información y Comunicación',
-    pregunta: 'Cuando recibe información para desarrollar una actividad y detecta que está incompleta, ¿qué acción refleja una adecuada gestión de la información?',
+    pregunta: 'Un profesional de la Secretaría de Vivienda de la Gobernación de Cundinamarca recibe el expediente digital para proyectar el informe de viabilidad técnica de una obra de mejoramiento de vivienda en la Provincia de Almeidas. Al revisar los documentos cargados en el sistema de gestión documental, nota que los planos topográficos adjuntos corresponden a otra zona del departamento y que falta el análisis de suelos indispensable para emitir el concepto institucional definitivo. El plazo para la entrega del informe vence al finalizar la semana. Ante esta situación que compromete la calidad del insumo recibido, ¿qué acción por parte del profesional refleja una adecuada gestión de la información y comunicación en el marco del MIPG departamental?',
     opciones: [
       ['A', 'Completar el trabajo con la información disponible.'],
       ['B', 'Ajustar los datos según su criterio para evitar retrasos.'],
@@ -110,7 +110,7 @@ const QUESTIONS = [
   {
     id: 8,
     seccion: 'Información y Comunicación',
-    pregunta: 'Si durante sus actividades identifica una irregularidad en la información, ¿cómo actúa?',
+    pregunta: 'En la Dirección de Rentas de la Secretaría de Hacienda de la Gobernación de Cundinamarca, un analista se encuentra procesando las liquidaciones extemporáneas del impuesto sobre vehículos. Mientras cruza los datos en el sistema financiero de la entidad, identifica que los registros de pagos de un lote de contribuyentes muestran alteraciones en las fechas de validación y descuentos aplicados que no coinciden con los soportes bancarios físicos ni con el calendario tributario legal vigente. El analista sospecha que se trata de una inconsistencia sistémica grave o una alteración indebida de la información. Si durante el desarrollo de sus actividades diarias el funcionario identifica esta irregularidad en la información institucional, ¿cómo debe actuar bajo los lineamientos de la dimensión de Información y Comunicación del MIPG?',
     opciones: [
       ['A', 'Comunicarla verbalmente.'],
       ['B', 'No reportarla para evitar inconvenientes.'],
@@ -125,12 +125,12 @@ const QUESTIONS = [
   {
     id: 9,
     seccion: 'Monitoreo',
-    pregunta: 'En el seguimiento a un plan de mejoramiento, identifica que una acción no se ha cumplido en el plazo establecido. ¿Qué hace?',
+    pregunta: 'En la Secretaría de Bienestar Verde de la Gobernación de Cundinamarca, un funcionario es el encargado de realizar el seguimiento mensual a las acciones de mejora suscritas en el plan de mejoramiento institucional, el cual se derivó de una auditoría realizada por la Contraloría de Cundinamarca respecto a la entrega de licencias ambientales y concesiones de agua provinciales. Al revisar los soportes de la vigencia, el funcionario identifica que una de las acciones clave —consistente en la actualización del software de registro de cuencas— tiene como fecha límite el día de hoy, pero el equipo que supervisa la plataforma reporta que la actividad se encuentra apenas en un 30% de ejecución debido a problemas contractuales. Ante el incumplimiento evidente del plazo establecido para esta acción del plan de mejoramiento, ¿cómo debe actuar el funcionario responsable del monitoreo de acuerdo con los lineamientos del MIPG departamental?',
     opciones: [
-      ['A', 'Dar por cerrada la acción para evitar retrasos en el informe.'],
-      ['B', 'Esperar a que el responsable actualice la información.'],
-      ['C', 'Registrar el incumplimiento, solicitar actualización y verificar el nuevo compromiso hasta su cumplimiento.'],
-      ['D', 'Informar de manera informal sin dejar evidencia.']
+      ['A', 'Esperar a que la dependencia responsable termine la actividad sin importar la fecha, para no generar alarmas innecesarias.'],
+      ['B', 'Modificar directamente las fechas del cronograma en el sistema de control interno para que no se refleje el retraso ante la Contraloría.'],
+      ['C', 'Registrar formalmente el avance real, reportar la alerta de incumplimiento al líder del proceso y solicitar los soportes de justificación para tramitar la reprogramación sustentada ante Control Interno.'],
+      ['D', 'Eliminar esa acción específica del plan de mejoramiento argumentando fallas de fuerza mayor por parte del contratista.']
     ],
     correcta: 'C',
     valor: 10
@@ -138,7 +138,7 @@ const QUESTIONS = [
   {
     id: 10,
     seccion: 'Monitoreo',
-    pregunta: 'Cuando observa que un indicador presenta un comportamiento inusual o negativo, ¿cuál es la acción más adecuada?',
+    pregunta: 'En la Secretaría de Ciencia, Tecnología e Innovación de la Gobernación de Cundinamarca, un profesional técnico realiza el seguimiento mensual al tablero de control del Plan de Desarrollo Departamental. Al revisar el indicador relacionado con el "Número de jóvenes rurales capacitados en herramientas de transformación digital", detecta una caída drástica e inusual del 45% en la provincia de Rionegro en comparación con el trimestre anterior. Aunque esta meta específica está asignada formalmente a otra dirección de la dependencia, el funcionario sabe que el rezago impactará directamente el Índice de Gestión de toda la secretaría al cierre de la vigencia. Frente a este comportamiento inusual o negativo detectado en el indicador, ¿cuál es la acción más adecuada que debe adoptar el funcionario bajo una sólida cultura de monitoreo y evaluación de resultados?',
     opciones: [
       ['A', 'Ignorarlo porque no afecta directamente sus funciones.'],
       ['B', 'Esperar a que alguien más lo revise en informes periódicos.'],
@@ -305,6 +305,15 @@ function displayQuestion(q) {
   $('sectionChip').textContent = q.seccion;
   $('countChip').textContent = `Pregunta ${state.currentIndex + 1} de ${state.questions.length}`;
   $('bonusChip').textContent = `+${q.valor} pts`;
+
+  // Show image banner only for first 5 questions
+  const banner = $('questionBanner');
+  if (q.id <= 5) {
+    banner.classList.add('visible');
+  } else {
+    banner.classList.remove('visible');
+  }
+
   $('questionTitle').textContent = q.pregunta;
   $('helperText').textContent = 'Selecciona una respuesta antes de continuar.';
   $('nextBtn').disabled = true;
